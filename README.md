@@ -2,25 +2,29 @@
 ---
 
 ## 目录
-1. [所需环境 Environment](#一、所需环境)
-2. [文件下载 Download](#二、文件下载)
-3. [预测步骤 How2predict](#三、预测步骤)
-4. [训练步骤 How2train](#四、训练步骤)
-5. [评估步骤 How2eval](#五、评估步骤)
-6. [参考资料 Reference](#六、Reference)
+1. [所需环境 Environment](#所需环境)
+2. [文件下载 Download](#文件下载)
+3. [预测步骤 How2predict](#预测步骤)
+4. [训练步骤 How2train](#训练步骤)
+5. [评估步骤 How2eval](#评估步骤)
+6. [参考资料 Reference](#Reference)
 
-## 一、所需环境
+## 所需环境
 tensorflow-gpu==1.13.1   
 keras==2.1.5   
 
-## 二、文件下载
+## 文件下载
 训练所需的预训练权重都可以在百度云下载。     
 链接: https://pan.baidu.com/s/1jp68kaBpA3Wfhc51vHJQ3w     
 提取码: 36sn 
 
-## 三、预测步骤
+训练所用的示例猫狗数据集也可以在百度云下载。
+链接: https://pan.baidu.com/s/1Jz1nafsrRcw2Hqso4c8i0g   
+提取码: hmmx   
+
+## 预测步骤
 #### 1、使用预训练权重
-- 下载完库后解压，放入model_data已经存在一个训练好的猫狗模型mobilenet025_catvsdog.h5，运行predict.py，输入  
+- 下载完库后解压，model_data已经存在一个训练好的猫狗模型mobilenet025_catvsdog.h5，运行predict.py，输入  
 ```python
 img/cat.jpg
 ```
@@ -43,7 +47,7 @@ img/street.jpg
 ```
 可完成预测。  
 
-## 四、训练步骤
+## 训练步骤
 - datasets文件夹下存放的图片分为两部分，train里面是训练图片，test里面是测试图片。  
 - 在训练之前需要首先准备好数据集，在train或者test文件里里面创建不同的文件夹，每个文件夹的名称为对应的类别名称，文件夹下面的图片为这个类的图片。文件格式可参考如下：
 ```
@@ -69,7 +73,7 @@ img/street.jpg
 - 之后修改model_data文件夹下的cls_classes.txt，使其也对应自己需要分的类。  
 - 在train.py里面调整自己要选择的网络和权重后，就可以开始训练了！  
 
-## 五、评估步骤
+## 评估步骤
 - datasets文件夹下存放的图片分为两部分，train里面是训练图片，test里面是测试图片，在评估的时候，我们使用的是test文件夹里面的图片。  
 - 在评估之前需要首先准备好数据集，在train或者test文件里里面创建不同的文件夹，每个文件夹的名称为对应的类别名称，文件夹下面的图片为这个类的图片。文件格式可参考如下：
 ```
@@ -104,6 +108,5 @@ _defaults = {
 ```
 - 运行eval_top1.py和eval_top5.py来进行模型准确率评估。
 
-## 六、Reference
-
+## Reference
 https://github.com/keras-team/keras-applications   
