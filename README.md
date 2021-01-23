@@ -23,12 +23,12 @@ keras==2.1.5
 提取码: hmmx   
 
 ## 预测步骤
-- 使用预训练权重
-    1. 下载完库后解压，model_data已经存在一个训练好的猫狗模型mobilenet025_catvsdog.h5，运行predict.py，输入  
+### a、使用预训练权重
+1. 下载完库后解压，model_data已经存在一个训练好的猫狗模型mobilenet025_catvsdog.h5，运行predict.py，输入  
 ```python
 img/cat.jpg
 ```
-- 使用自己训练的权重
+### b、使用自己训练的权重
 1. 按照训练步骤训练。  
 2. 在classification.py文件里面，在如下部分修改model_path、classes_path、backbone和alpha使其对应训练好的文件；**model_path对应logs文件夹下面的权值文件，classes_path是model_path对应分的类，backbone对应使用的主干特征提取网络，alpha是当使用mobilenet的alpha值**。  
 ```python
