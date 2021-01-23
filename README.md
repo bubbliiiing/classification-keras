@@ -47,22 +47,22 @@ img/street.jpg
 2、在训练之前需要首先准备好数据集，在train或者test文件里里面创建不同的文件夹，每个文件夹的名称为对应的类别名称，文件夹下面的图片为这个类的图片。文件格式可参考如下：
 ```
 |-datasets
-|   |-train
-|   |   |-cat
-|   |   |   |-123.jpg
-|   |   |   |-234.jpg
-|   |   |-dog
-|   |   |   |-345.jpg
-|   |   |   |-456.jpg
-|   |   |-...
-|   |-test
-|   |   |-cat
-|   |   |   |-567.jpg
-|   |   |   |-678.jpg
-|   |   |-dog
-|   |   |   |-789.jpg
-|   |   |   |-890.jpg
-|   |   |-...
+    |-train
+        |-cat
+            |-123.jpg
+            |-234.jpg
+        |-dog
+            |-345.jpg
+            |-456.jpg
+        |-...
+    |-test
+        |-cat
+            |-567.jpg
+            |-678.jpg
+        |-dog
+            |-789.jpg
+            |-890.jpg
+        |-...
 ```
 3、在准备好数据集后，需要在根目录运行txt_annotation.py生成训练所需的cls_train.txt，运行前需要修改其中的classes，将其修改成自己需要分的类。   
 4、之后修改model_data文件夹下的cls_classes.txt，使其也对应自己需要分的类。  
