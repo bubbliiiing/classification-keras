@@ -91,7 +91,7 @@ img/street.jpg
             |-890.jpg
         |-...
 ```
-3、在准备好数据集后，需要在根目录运行txt_annotation.py生成训练所需的cls_test.txt，运行前需要修改其中的classes，将其修改成自己需要分的类。   
+3、在准备好数据集后，需要在根目录运行txt_annotation.py生成评估所需的cls_test.txt，运行前需要修改其中的classes，将其修改成自己需要分的类。   
 4、之后在classification.py文件里面修改如下部分model_path、classes_path、backbone和alpha使其对应训练好的文件；**model_path对应logs文件夹下面的权值文件，classes_path是model_path对应分的类，backbone对应使用的主干特征提取网络，alpha是当使用mobilenet的alpha值**。  
 ```python
 _defaults = {
