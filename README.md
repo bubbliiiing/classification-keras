@@ -8,12 +8,13 @@
 4. [训练步骤 How2train](#训练步骤)
 5. [评估步骤 How2eval](#评估步骤)
 6. [参考资料 Reference](#Reference)
+---
 
 ### 所需环境
 tensorflow-gpu==1.13.1   
 keras==2.1.5  
 
-### 文件下载
+### 、文件下载
 训练所需的预训练权重都可以在百度云下载。     
 链接: https://pan.baidu.com/s/1jp68kaBpA3Wfhc51vHJQ3w     
 提取码: 36sn 
