@@ -18,8 +18,8 @@ keras==2.1.5
 链接: https://pan.baidu.com/s/1jp68kaBpA3Wfhc51vHJQ3w     
 提取码: 36sn 
 
-训练所用的示例猫狗数据集也可以在百度云下载。
-链接: https://pan.baidu.com/s/1Jz1nafsrRcw2Hqso4c8i0g   
+训练所用的示例猫狗数据集也可以在百度云下载。   
+链接: https://pan.baidu.com/s/1Jz1nafsrRcw2Hqso4c8i0g    
 提取码: hmmx   
 
 ## 预测步骤
