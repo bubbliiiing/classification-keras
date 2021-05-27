@@ -6,7 +6,7 @@ from keras.layers import (Activation, Conv2D, Dense, Dropout, Flatten, Input,
 from keras.models import Model
 
 
-def VGG16(input_shape=None, num_classes=1000):
+def VGG16(input_shape=None, classes=1000):
     img_input = Input(shape=input_shape)
 
     # Block 1
