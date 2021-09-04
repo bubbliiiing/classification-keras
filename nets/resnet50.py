@@ -74,6 +74,7 @@ def ResNet50(input_shape=[224,224,3], classes=1000):
     x = BatchNormalization(name='bn_conv1')(x)
     x = Activation('relu')(x)
 
+    x = ZeroPadding2D((1, 1))(x)
     # 112,112,64 -> 56,56,64
     x = MaxPooling2D((3, 3), strides=(2, 2))(x)
 
