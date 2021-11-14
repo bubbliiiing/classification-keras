@@ -195,7 +195,7 @@ if __name__ == "__main__":
             validation_steps    = epoch_step_val,
             epochs              = Epoch,
             initial_epoch       = Freeze_Epoch,
-            use_multiprocessing = True if num_workers != 0 else False,
+            use_multiprocessing = True if num_workers > 1 else False,
             workers             = num_workers,
             callbacks           = [logging, checkpoint, reduce_lr, early_stopping, loss_history]
         )
