@@ -1,8 +1,4 @@
-import warnings
-
-from keras import backend as K
-from keras.layers import (Activation, Conv2D, Dense, Dropout, Flatten, Input,
-                          MaxPooling2D, Reshape)
+from keras.layers import Conv2D, Dense, Flatten, Input, MaxPooling2D
 from keras.models import Model
 
 

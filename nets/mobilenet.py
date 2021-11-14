@@ -1,9 +1,7 @@
-import warnings
-
 from keras import backend as K
 from keras.layers import (Activation, BatchNormalization, Conv2D,
                           DepthwiseConv2D, Dropout, GlobalAveragePooling2D,
-                          GlobalMaxPooling2D, Input, Reshape)
+                          Input, Reshape)
 from keras.models import Model
 
 

@@ -1,7 +1,3 @@
-
-from __future__ import print_function
-
-import numpy as np
 from keras import layers
 from keras.layers import (Activation, AveragePooling2D, BatchNormalization,
                           Conv2D, Dense, Flatten, Input, MaxPooling2D,
