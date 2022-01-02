@@ -19,7 +19,10 @@ if __name__ == "__main__":
     input_shape     = [224, 224]
     #------------------------------------------------------#
     #   所用模型种类：
-    #   mobilenet、resnet50、vgg16是常用的分类网络
+    #   mobilenet、resnet50、vgg16、vit
+    #
+    #   在使用vit时学习率需要设置的小一些，否则不收敛
+    #   可以将最下方的两个lr分别设置成1e-4、1e-5
     #------------------------------------------------------#
     backbone        = "mobilenet"
     #------------------------------------------------------#
@@ -66,7 +69,7 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     class_names, num_classes = get_classes(classes_path)
 
-    assert backbone in ["mobilenet", "resnet50", "vgg16"]
+    assert backbone in ["mobilenet", "resnet50", "vgg16", "vit"]
     #------------------------------------------------------#
     #   创建分类模型
     #------------------------------------------------------#
@@ -158,7 +161,6 @@ if __name__ == "__main__":
             workers             = num_workers,
             callbacks           = [logging, checkpoint, reduce_lr, early_stopping, loss_history]
         )
-
 
     if Freeze_Train:
         for i in range(freeze_layers[backbone]):
