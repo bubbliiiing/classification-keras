@@ -15,12 +15,12 @@ keras==2.1.5
 
 ### 文件下载
 训练所需的预训练权重都可以在百度云下载。     
-链接: https://pan.baidu.com/s/1jp68kaBpA3Wfhc51vHJQ3w     
-提取码: 36sn 
+链接: https://pan.baidu.com/s/1MtnVfgZ9aN1bYfsBIGjkBA     
+提取码: eztx     
 
 训练所用的示例猫狗数据集也可以在百度云下载。   
-链接: https://pan.baidu.com/s/1Jz1nafsrRcw2Hqso4c8i0g    
-提取码: hmmx   
+链接: https://pan.baidu.com/s/1hYBNG0TnGIeWw1-SwkzqpA     
+提取码: ass8    
 
 ### 训练步骤
 1. datasets文件夹下存放的图片分为两部分，train里面是训练图片，test里面是测试图片。  
