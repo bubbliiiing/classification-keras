@@ -51,8 +51,8 @@ keras==2.1.5
             |-890.jpg
         |-...
 ```
-3. 在准备好数据集后，需要在根目录运行txt_annotation.py生成训练所需的cls_train.txt，运行前需要修改其中的classes，将其修改成自己需要分的类。   
-4. 之后修改model_data文件夹下的cls_classes.txt，使其也对应自己需要分的类。  
+3. 之后修改model_data文件夹下的cls_classes.txt，使其也对应自己需要分的类。  
+4. 在准备好数据集后，需要在根目录运行txt_annotation.py生成训练所需的cls_train.txt，运行前需要修改其中的classes_path，classes_path需要指向model_data下的txt文件，txt文件中是自己所要去区分的种类，将其修改成自己需要分的类。  
 5. 在train.py里面调整自己要选择的网络和权重后，就可以开始训练了！  
 
 ### 预测步骤
@@ -117,7 +117,7 @@ img/cat.jpg
             |-890.jpg
         |-...
 ```
-3. 在准备好数据集后，需要在根目录运行txt_annotation.py生成评估所需的cls_test.txt，运行前需要修改其中的classes，将其修改成自己需要分的类。   
+3. 在准备好数据集后，需要在根目录运行txt_annotation.py生成训练所需的cls_test.txt，运行前需要修改其中的classes_path，classes_path需要指向model_data下的txt文件，txt文件中是自己所要去区分的种类，将其修改成自己需要分的类。  
 4. 之后在classification.py文件里面修改如下部分model_path、classes_path、backbone和alpha使其对应训练好的文件；**model_path对应logs文件夹下面的权值文件，classes_path是model_path对应分的类，backbone对应使用的主干特征提取网络，alpha是当使用mobilenet的alpha值**。  
 ```python
 _defaults = {
