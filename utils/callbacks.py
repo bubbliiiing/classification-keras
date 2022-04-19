@@ -1,12 +1,12 @@
 import os
 
 import keras
+import math
 import matplotlib
 matplotlib.use('Agg')
 from matplotlib import pyplot as plt
 import scipy.signal
 from keras import backend as K
-import math
 
 class LossHistory(keras.callbacks.Callback):
     def __init__(self, log_dir):
@@ -94,3 +94,12 @@ class WarmUpCosineDecayScheduler(keras.callbacks.Callback):
         if self.verbose > 0:
             print('Setting learning rate to %s.' % (learning_rate))
     
+class ParallelModelCheckpoint(keras.callbacks.ModelCheckpoint):
+    def __init__(self, model, filepath, monitor='val_loss', verbose=0,
+                 save_best_only=False, save_weights_only=False,
+                 mode='auto', period=1):
+        self.single_model = model
+        super(ParallelModelCheckpoint,self).__init__(filepath, monitor, verbose,save_best_only, save_weights_only,mode, period)
+
+    def set_model(self, model):
+        super(ParallelModelCheckpoint,self).set_model(self.single_model)

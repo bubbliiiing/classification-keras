@@ -20,22 +20,27 @@ class Classification(object):
         #   model_path指向logs文件夹下的权值文件，classes_path指向model_data下的txt
         #   如果出现shape不匹配，同时要注意训练时的model_path和classes_path参数的修改
         #--------------------------------------------------------------------------#
-        "model_path"    : 'model_data/mobilenet025_catvsdog.h5',
-        "classes_path"  : 'model_data/cls_classes.txt',
+        "model_path"        : 'model_data/mobilenet025_catvsdog.h5',
+        "classes_path"      : 'model_data/cls_classes.txt',
         #--------------------------------------------------------------------#
         #   输入的图片大小
         #--------------------------------------------------------------------#
-        "input_shape"   : [224, 224],
+        "input_shape"       : [224, 224],
         #--------------------------------------------------------------------#
         #   所用模型种类：
         #   mobilenet、resnet50、vgg16、vit
         #--------------------------------------------------------------------#
-        "backbone"      : 'mobilenet',
+        "backbone"          : 'mobilenet',
         #--------------------------------------------------------------------#
         #   当使用mobilenet的alpha值
         #   仅在backbone='mobilenet'的时候有效
         #--------------------------------------------------------------------#
-        "alpha"         : 0.25
+        "alpha"             : 0.25,
+        #--------------------------------------------------------------------#
+        #   该变量用于控制是否使用letterbox_image对输入图像进行不失真的resize
+        #   否则对图像进行CenterCrop
+        #--------------------------------------------------------------------#
+        "letterbox_image"   : False,
     }
 
     @classmethod
@@ -88,7 +93,7 @@ class Classification(object):
         #---------------------------------------------------#
         #   对图片进行不失真的resize
         #---------------------------------------------------#
-        image_data  = letterbox_image(image, [self.input_shape[1], self.input_shape[0]])
+        image_data  = letterbox_image(image, [self.input_shape[1], self.input_shape[0]], self.letterbox_image)
         #---------------------------------------------------------#
         #   归一化+添加上batch_size维度
         #---------------------------------------------------------#

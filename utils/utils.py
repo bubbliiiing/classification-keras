@@ -4,23 +4,32 @@ from functools import partial
 import numpy as np
 from PIL import Image
 
+from .utils_aug import resize, center_crop
+
 
 #---------------------------------------------------#
-#   不失真的resize
+#   对输入图像进行resize
 #---------------------------------------------------#
-def letterbox_image(image, size):
-    iw, ih  = image.size
-    w, h    = size
+def letterbox_image(image, size, letterbox_image):
+    w, h = size
+    iw, ih = image.size
+    if letterbox_image:
+        '''resize image with unchanged aspect ratio using padding'''
+        scale = min(w/iw, h/ih)
+        nw = int(iw*scale)
+        nh = int(ih*scale)
 
-    scale   = min(w/iw, h/ih)
-    nw      = int(iw*scale)
-    nh      = int(ih*scale)
-
-    image   = image.resize((nw,nh), Image.BICUBIC)
-    new_image = Image.new('RGB', size, (128,128,128))
-    new_image.paste(image, ((w-nw)//2, (h-nh)//2))
-
+        image = image.resize((nw,nh), Image.BICUBIC)
+        new_image = Image.new('RGB', size, (128,128,128))
+        new_image.paste(image, ((w-nw)//2, (h-nh)//2))
+    else:
+        if h == w:
+            new_image = resize(image, h)
+        else:
+            new_image = resize(image, [h ,w])
+        new_image = center_crop(new_image, [h ,w])
     return new_image
+
 
 #---------------------------------------------------#
 #   获得类

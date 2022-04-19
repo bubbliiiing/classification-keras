@@ -1,19 +1,27 @@
 import datetime
 import os
+
 import numpy as np
 from keras.callbacks import (EarlyStopping, LearningRateScheduler,
                              ModelCheckpoint, TensorBoard)
 from keras.layers import Conv2D, Dense, DepthwiseConv2D
 from keras.optimizers import SGD, Adam
 from keras.regularizers import l2
+from keras.utils.multi_gpu_utils import multi_gpu_model
 
 from nets import freeze_layers, get_model_from_name
-from utils.callbacks import ExponentDecayScheduler, LossHistory
+from utils.callbacks import (ExponentDecayScheduler, LossHistory,
+                             ParallelModelCheckpoint)
 from utils.dataloader import ClsDatasets
 from utils.utils import get_classes, get_lr_scheduler
 
-
 if __name__ == "__main__":
+    #---------------------------------------------------------------------#
+    #   train_gpu   训练用到的GPU
+    #               默认为第一张卡、双卡为[0, 1]、三卡为[0, 1, 2]
+    #               在使用多GPU时，每个卡上的batch为总batch除以卡的数量。
+    #---------------------------------------------------------------------#
+    train_gpu       = [0,]
     #---------------------------------------------------------------------#
     #   classes_path    指向model_data下的txt，与自己训练的数据集相关 
     #                   训练前一定要修改classes_path，使其对应自己的数据集
@@ -151,6 +159,13 @@ if __name__ == "__main__":
     test_annotation_path    = 'cls_test.txt'
 
     #------------------------------------------------------#
+    #   设置用到的显卡
+    #------------------------------------------------------#
+    os.environ["CUDA_VISIBLE_DEVICES"]  = ','.join(str(x) for x in train_gpu)
+    ngpus_per_node                      = len(train_gpu)
+    print('Number of devices: {}'.format(ngpus_per_node))
+
+    #------------------------------------------------------#
     #   获取classes
     #------------------------------------------------------#
     class_names, num_classes = get_classes(classes_path)
@@ -159,16 +174,21 @@ if __name__ == "__main__":
     #   创建分类模型
     #------------------------------------------------------#
     if backbone == "mobilenet":
-        model = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes, alpha=alpha)
+        model_body = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes, alpha=alpha)
     else:
-        model = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes)
+        model_body = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes)
     
     if model_path != "":
         #------------------------------------------------------#
         #   载入预训练权重
         #------------------------------------------------------#
         print('Load weights {}.'.format(model_path))
-        model.load_weights(model_path, by_name=True, skip_mismatch=True)
+        model_body.load_weights(model_path, by_name=True, skip_mismatch=True)
+
+    if ngpus_per_node > 1:
+        model   = multi_gpu_model(model_body, gpus=ngpus_per_node)
+    else:
+        model   = model_body
 
     #---------------------------#
     #   读取数据集对应的txt
@@ -194,8 +214,8 @@ if __name__ == "__main__":
     if True:
         if Freeze_Train:
             freeze_layers = freeze_layers[backbone]
-            for i in range(freeze_layers): model.layers[i].trainable = False
-            print('Freeze the first {} layers of total {} layers.'.format(freeze_layers, len(model.layers)))
+            for i in range(freeze_layers): model_body.layers[i].trainable = False
+            print('Freeze the first {} layers of total {} layers.'.format(freeze_layers, len(model_body.layers)))
             
         #-------------------------------------------------------------------#
         #   如果不冻结训练的话，直接设置batch_size为Unfreeze_batch_size
@@ -248,8 +268,12 @@ if __name__ == "__main__":
         log_dir         = os.path.join(save_dir, "loss_" + str(time_str))
         logging         = TensorBoard(log_dir)
         loss_history    = LossHistory(log_dir)
-        checkpoint      = ModelCheckpoint(os.path.join(save_dir, "ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), 
-                                monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = save_period)
+        if ngpus_per_node > 1:
+            checkpoint      = ParallelModelCheckpoint(model_body, os.path.join(save_dir, "ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = save_period)
+        else:
+            checkpoint      = ModelCheckpoint(os.path.join(save_dir, "ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = save_period)
         early_stopping  = EarlyStopping(monitor='val_loss', min_delta = 0, patience = 10, verbose = 1)
         lr_scheduler    = LearningRateScheduler(lr_scheduler_func, verbose = 1)
         callbacks       = [logging, loss_history, checkpoint, lr_scheduler]
@@ -295,8 +319,8 @@ if __name__ == "__main__":
             lr_scheduler    = LearningRateScheduler(lr_scheduler_func, verbose = 1)
             callbacks       = [logging, loss_history, checkpoint, lr_scheduler]
             
-            for i in range(len(model.layers)): 
-                model.layers[i].trainable = True
+            for i in range(len(model_body.layers)): 
+                model_body.layers[i].trainable = True
             model.compile(loss = 'categorical_crossentropy', optimizer = optimizer, metrics = ['categorical_accuracy'])
 
             epoch_step      = num_train // batch_size
