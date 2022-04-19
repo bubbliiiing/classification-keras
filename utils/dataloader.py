@@ -65,10 +65,6 @@ class ClsDatasets(keras.utils.Sequence):
 
     def get_random_data(self, image, input_shape, jitter=.3, hue=.1, sat=0.7, val=0.3, random=True):
         #------------------------------#
-        #   读取图像并转换成RGB图像
-        #------------------------------#
-        image   = cvtColor(image)
-        #------------------------------#
         #   获得图像的高宽与目标高宽
         #------------------------------#
         iw, ih  = image.size
