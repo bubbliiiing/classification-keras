@@ -5,7 +5,7 @@ import numpy as np
 
 from nets import get_model_from_name
 from utils.utils import (cvtColor, get_classes, letterbox_image,
-                         preprocess_input)
+                         preprocess_input, show_config)
 
 
 #--------------------------------------------#
@@ -63,6 +63,8 @@ class Classification(object):
         #---------------------------------------------------#
         self.class_names, self.num_classes = get_classes(self.classes_path)
         self.generate()
+        
+        show_config(**self._defaults)
 
     #---------------------------------------------------#
     #   载入模型

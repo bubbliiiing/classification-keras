@@ -2,6 +2,7 @@ import datetime
 import os
 
 import numpy as np
+import tensorflow as tf
 from keras.callbacks import (EarlyStopping, LearningRateScheduler,
                              ModelCheckpoint, TensorBoard)
 from keras.layers import Conv2D, Dense, DepthwiseConv2D
@@ -13,7 +14,9 @@ from nets import freeze_layers, get_model_from_name
 from utils.callbacks import (ExponentDecayScheduler, LossHistory,
                              ParallelModelCheckpoint)
 from utils.dataloader import ClsDatasets
-from utils.utils import get_classes, get_lr_scheduler
+from utils.utils import get_classes, get_lr_scheduler, show_config
+
+tf.logging.set_verbosity(tf.logging.ERROR)
 
 if __name__ == "__main__":
     #---------------------------------------------------------------------#
@@ -67,8 +70,8 @@ if __name__ == "__main__":
     #           Init_Epoch = 0，Freeze_Epoch = 50，UnFreeze_Epoch = 100，Freeze_Train = True，optimizer_type = 'adam'，Init_lr = 1e-3。（冻结）
     #           Init_Epoch = 0，UnFreeze_Epoch = 100，Freeze_Train = False，optimizer_type = 'adam'，Init_lr = 1e-3。（不冻结）
     #       SGD：
-    #           Init_Epoch = 0，Freeze_Epoch = 50，UnFreeze_Epoch = 100，Freeze_Train = True，optimizer_type = 'sgd'，Init_lr = 1e-2。（冻结）
-    #           Init_Epoch = 0，UnFreeze_Epoch = 100，Freeze_Train = False，optimizer_type = 'sgd'，Init_lr = 1e-2。（不冻结）
+    #           Init_Epoch = 0，Freeze_Epoch = 50，UnFreeze_Epoch = 200，Freeze_Train = True，optimizer_type = 'sgd'，Init_lr = 1e-2。（冻结）
+    #           Init_Epoch = 0，UnFreeze_Epoch = 200，Freeze_Train = False，optimizer_type = 'sgd'，Init_lr = 1e-2。（不冻结）
     #       其中：UnFreeze_Epoch可以在100-300之间调整。
     #   （二）从0开始训练：
     #       Adam：
@@ -104,7 +107,7 @@ if __name__ == "__main__":
     #   UnFreeze_Epoch          模型总共训练的epoch
     #   Unfreeze_batch_size     模型在解冻后的batch_size
     #------------------------------------------------------------------#
-    UnFreeze_Epoch      = 100
+    UnFreeze_Epoch      = 200
     Unfreeze_batch_size = 32
     #------------------------------------------------------------------#
     #   Freeze_Train    是否进行冻结训练
@@ -136,9 +139,9 @@ if __name__ == "__main__":
     #------------------------------------------------------------------#
     lr_decay_type       = 'cos'
     #------------------------------------------------------------------#
-    #   save_period     多少个epoch保存一次权值，默认每个世代都保存
+    #   save_period     多少个epoch保存一次权值
     #------------------------------------------------------------------#
-    save_period         = 1
+    save_period         = 10
     #------------------------------------------------------------------#
     #   save_dir        权值与日志文件保存的文件夹
     #------------------------------------------------------------------#
@@ -202,6 +205,26 @@ if __name__ == "__main__":
     np.random.seed(10101)
     np.random.shuffle(train_lines)
     np.random.seed(None)
+    
+    show_config(
+        num_classes = num_classes, backbone = backbone, model_path = model_path, input_shape = input_shape, \
+        Init_Epoch = Init_Epoch, Freeze_Epoch = Freeze_Epoch, UnFreeze_Epoch = UnFreeze_Epoch, Freeze_batch_size = Freeze_batch_size, Unfreeze_batch_size = Unfreeze_batch_size, Freeze_Train = Freeze_Train, \
+        Init_lr = Init_lr, Min_lr = Min_lr, optimizer_type = optimizer_type, momentum = momentum, lr_decay_type = lr_decay_type, \
+        save_period = save_period, save_dir = save_dir, num_workers = num_workers, num_train = num_train, num_val = num_val
+    )
+    #---------------------------------------------------------#
+    #   总训练世代指的是遍历全部数据的总次数
+    #   总训练步长指的是梯度下降的总次数 
+    #   每个训练世代包含若干训练步长，每个训练步长进行一次梯度下降。
+    #   此处仅建议最低训练世代，上不封顶，计算时只考虑了解冻部分
+    #----------------------------------------------------------#
+    wanted_step = 3e4 if optimizer_type == "sgd" else 1e4
+    total_step  = num_train // Unfreeze_batch_size * UnFreeze_Epoch
+    if total_step <= wanted_step:
+        wanted_epoch = wanted_step // (num_train // Unfreeze_batch_size) + 1
+        print("\n\033[1;33;44m[Warning] 使用%s优化器时，建议将训练总步长设置到%d以上。\033[0m"%(optimizer_type, wanted_step))
+        print("\033[1;33;44m[Warning] 本次运行的总训练数据量为%d，Unfreeze_batch_size为%d，共训练%d个Epoch，计算出总训练步长为%d。\033[0m"%(num_train, Unfreeze_batch_size, UnFreeze_Epoch, total_step))
+        print("\033[1;33;44m[Warning] 由于总训练步长为%d，小于建议总步长%d，建议设置总世代为%d。\033[0m"%(total_step, wanted_step, wanted_epoch))
 
     #------------------------------------------------------#
     #   主干特征提取网络特征通用，冻结训练可以加快训练速度
@@ -271,12 +294,20 @@ if __name__ == "__main__":
         if ngpus_per_node > 1:
             checkpoint      = ParallelModelCheckpoint(model_body, os.path.join(save_dir, "ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), 
                                     monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = save_period)
+            checkpoint_last = ParallelModelCheckpoint(model_body, os.path.join(save_dir, "last_epoch_weights.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = 1)
+            checkpoint_best = ParallelModelCheckpoint(model_body, os.path.join(save_dir, "best_epoch_weights.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = True, period = 1)
         else:
             checkpoint      = ModelCheckpoint(os.path.join(save_dir, "ep{epoch:03d}-loss{loss:.3f}-val_loss{val_loss:.3f}.h5"), 
                                     monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = save_period)
+            checkpoint_last = ModelCheckpoint(os.path.join(save_dir, "last_epoch_weights.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = False, period = 1)
+            checkpoint_best = ModelCheckpoint(os.path.join(save_dir, "best_epoch_weights.h5"), 
+                                    monitor = 'val_loss', save_weights_only = True, save_best_only = True, period = 1)
         early_stopping  = EarlyStopping(monitor='val_loss', min_delta = 0, patience = 10, verbose = 1)
         lr_scheduler    = LearningRateScheduler(lr_scheduler_func, verbose = 1)
-        callbacks       = [logging, loss_history, checkpoint, lr_scheduler]
+        callbacks       = [logging, loss_history, checkpoint, checkpoint_last, checkpoint_best, lr_scheduler]
 
         if start_epoch < end_epoch:
             print('Train on {} samples, val on {} samples, with batch size {}.'.format(num_train, num_val, batch_size))
@@ -317,7 +348,7 @@ if __name__ == "__main__":
             #---------------------------------------#
             lr_scheduler_func = get_lr_scheduler(lr_decay_type, Init_lr_fit, Min_lr_fit, UnFreeze_Epoch)
             lr_scheduler    = LearningRateScheduler(lr_scheduler_func, verbose = 1)
-            callbacks       = [logging, loss_history, checkpoint, lr_scheduler]
+            callbacks       = [logging, loss_history, checkpoint, checkpoint_last, checkpoint_best, lr_scheduler]
             
             for i in range(len(model_body.layers)): 
                 model_body.layers[i].trainable = True
