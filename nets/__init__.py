@@ -1,18 +1,25 @@
-from .mobilenet import MobileNet
-from .resnet50 import ResNet50
-from .vgg16 import VGG16
-from .vit import VisionTransformer
+from .mobilenetv1 import MobileNetV1
+from .swin_transformer import swin_transformer_tiny, swin_transformer_base, swin_transformer_small
+from .resnet import ResNet50
+from .vgg import VGG16
+from .vision_transformer import VisionTransformer
 
 get_model_from_name = {
-    "mobilenet"     : MobileNet,
+    "mobilenetv1"   : MobileNetV1,
     "resnet50"      : ResNet50,
     "vgg16"         : VGG16,
-    "vit"           : VisionTransformer
+    "vit_b_16"      : VisionTransformer,
+    "swin_transformer_tiny"     : swin_transformer_tiny,
+    "swin_transformer_small"    : swin_transformer_small,
+    "swin_transformer_base"     : swin_transformer_base
 }
 
 freeze_layers = {
-    "mobilenet"     : 81,
+    "mobilenetv1"   : 81,
     "resnet50"      : 173,
     "vgg16"         : 19,
-    "vit"           : 130,
+    "vit_b_16"      : 130,
+    "swin_transformer_tiny"     : 181,
+    "swin_transformer_small"    : 350,
+    "swin_transformer_base"     : 350
 }

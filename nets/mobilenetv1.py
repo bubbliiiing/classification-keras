@@ -39,7 +39,7 @@ def _depthwise_conv_block(inputs, pointwise_conv_filters, alpha,
     x = BatchNormalization(name='conv_pw_%d_bn' % block_id)(x)
     return Activation(relu6, name='conv_pw_%d_relu' % block_id)(x)
 
-def MobileNet(input_shape=None,
+def MobileNetV1(input_shape=None,
               alpha=1.0,
               depth_multiplier=1,
               dropout=1e-3,

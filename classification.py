@@ -28,12 +28,14 @@ class Classification(object):
         "input_shape"       : [224, 224],
         #--------------------------------------------------------------------#
         #   所用模型种类：
-        #   mobilenet、resnet50、vgg16、vit
+        #   mobilenetv1、resnet50、vgg16、
+        #   vit_b_16、
+        #   swin_transformer_tiny、swin_transformer_small、swin_transformer_base
         #--------------------------------------------------------------------#
-        "backbone"          : 'mobilenet',
+        "backbone"          : 'mobilenetv1',
         #--------------------------------------------------------------------#
-        #   当使用mobilenet的alpha值
-        #   仅在backbone='mobilenet'的时候有效
+        #   当使用mobilenetv1的alpha值
+        #   仅在backbone='mobilenetv1'的时候有效
         #--------------------------------------------------------------------#
         "alpha"             : 0.25,
         #--------------------------------------------------------------------#
@@ -76,7 +78,7 @@ class Classification(object):
         #---------------------------------------------------#
         #   载入模型与权值
         #---------------------------------------------------#
-        if self.backbone == "mobilenet":
+        if self.backbone == "mobilenetv1":
             self.model = get_model_from_name[self.backbone](input_shape = [self.input_shape[0], self.input_shape[1], 3], classes = self.num_classes, alpha = self.alpha)
         else:
             self.model = get_model_from_name[self.backbone](input_shape = [self.input_shape[0], self.input_shape[1], 3], classes = self.num_classes)

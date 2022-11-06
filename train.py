@@ -36,12 +36,14 @@ if __name__ == "__main__":
     input_shape     = [224, 224]
     #------------------------------------------------------#
     #   所用模型种类：
-    #   mobilenet、resnet50、vgg16、vit
+    #   mobilenetv1、resnet50、vgg16、
+    #   vit_b_16、
+    #   swin_transformer_tiny、swin_transformer_small、swin_transformer_base
     #------------------------------------------------------#
-    backbone        = "mobilenet"
+    backbone        = "mobilenetv1"
     #------------------------------------------------------#
-    #   当使用mobilenet的alpha值
-    #   仅在backbone='mobilenet'的时候有效
+    #   当使用mobilenetv1的alpha值
+    #   仅在backbone='mobilenetv1'的时候有效
     #------------------------------------------------------#
     alpha           = 0.25
     #----------------------------------------------------------------------------------------------------------------------------#
@@ -176,7 +178,7 @@ if __name__ == "__main__":
     #------------------------------------------------------#
     #   创建分类模型
     #------------------------------------------------------#
-    if backbone == "mobilenet":
+    if backbone == "mobilenetv1":
         model_body = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes, alpha=alpha)
     else:
         model_body = get_model_from_name[backbone](input_shape=[input_shape[0], input_shape[1], 3], classes=num_classes)
@@ -253,7 +255,7 @@ if __name__ == "__main__":
         nbs             = 64
         lr_limit_max    = 1e-3 if optimizer_type == 'adam' else 1e-1
         lr_limit_min    = 1e-4 if optimizer_type == 'adam' else 5e-4
-        if backbone == 'vit':
+        if backbone in ['vit_b_16', 'swin_transformer_tiny', 'swin_transformer_small', 'swin_transformer_base']:
             nbs             = 256
             lr_limit_max    = 1e-3 if optimizer_type == 'adam' else 1e-1
             lr_limit_min    = 1e-5 if optimizer_type == 'adam' else 5e-4
@@ -337,7 +339,7 @@ if __name__ == "__main__":
             nbs             = 64
             lr_limit_max    = 1e-3 if optimizer_type == 'adam' else 1e-1
             lr_limit_min    = 1e-4 if optimizer_type == 'adam' else 5e-4
-            if backbone == 'vit':
+            if backbone in ['vit_b_16', 'swin_transformer_tiny', 'swin_transformer_small', 'swin_transformer_base']:
                 nbs             = 256
                 lr_limit_max    = 1e-3 if optimizer_type == 'adam' else 1e-1
                 lr_limit_min    = 1e-5 if optimizer_type == 'adam' else 5e-4
