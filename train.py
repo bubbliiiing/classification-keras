@@ -36,7 +36,7 @@ if __name__ == "__main__":
     input_shape     = [224, 224]
     #------------------------------------------------------#
     #   所用模型种类：
-    #   mobilenetv1、resnet50、vgg16、
+    #   mobilenetv1、mobilenetv2、resnet50、vgg16、
     #   vit_b_16、
     #   swin_transformer_tiny、swin_transformer_small、swin_transformer_base
     #------------------------------------------------------#

@@ -22,8 +22,8 @@ keras==2.1.5
 
 ## 文件下载
 训练所需的预训练权重都可以在百度云下载。     
-链接: https://pan.baidu.com/s/1MtnVfgZ9aN1bYfsBIGjkBA     
-提取码: eztx     
+链接: https://pan.baidu.com/s/1lTqDei24Yt0GLJDnjk2uDg    
+提取码: gpvj   
 
 训练所用的示例猫狗数据集也可以在百度云下载。   
 链接: https://pan.baidu.com/s/1hYBNG0TnGIeWw1-SwkzqpA     
